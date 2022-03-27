@@ -1,0 +1,53 @@
+---
+title: "Temporary Title"
+author: Eunkyo Oh
+thanks: "Code and data are available at: To be updated"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+# Introduction
+
+
+# Data
+
+
+# Model
+
+
+# Results
+
+# Discussion
+
+## First discussion point
+
+## Second discussion point
+
+## Third discussion point
+
+## Weaknesses and next steps
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+
+
+# Additional details
+
+\newpage
+
+# References
+
+
