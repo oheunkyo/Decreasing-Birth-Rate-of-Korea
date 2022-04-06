@@ -1,9 +1,9 @@
 ---
 title: "South Korea's Alarming Steady Decrease in Birth Rate is Not Expected to Level Unless Drastic Measures are Taken"
 author: Eunkyo Oh
-thanks: "Code and data are available at: "
+thanks: "Code and data are available at: github.com/oheunkyo/Decreasing-Birth-Rate-of-Korea"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "Republic of Korea's birth rate is at its all time low . Second sentence. Third sentence. Fourth sentence.
+abstract: "The Republic of Korea's birth rate is decreasing at an alarming pace and it shows no signs of slowing down. In this paper, we examine correlations with variables that depict economical status of the general population, and project future birth rate in upcoming years. From the data at the World Bank, we visualize the data to show that the increase in housing prices and CPI has greatly affected the birth rate, and perform regression analysis to predict that there are no visible signs of birth rate recovering. This outcome implies a rapid decline in population and inevitable stress the younger population will have to withstand in order to support the growing old population.
  \\par
  \\textbf {Keywords:} south korea, birth rate, decreasing birth rate, population, aging population, regression studies, world bank"
 output:
@@ -20,19 +20,15 @@ library(tidyverse)
 
 # Introduction
 
-Republic of Korea's birth rate is at it's all time low and it has just dipped below 1 birth per women, which means that 
-population is at a tipping point. It is the second lowest in the world, after Taiwan In this paper we examine possible reasons for it and perform regression models to further predict whether the birthrate will continue to decrease 
+Republic of Korea's birth rate is at it's all time low and it dipped below 1 birth per women, at 0.84 in 2020 [@fadanelli_2022]. It is the second lowest in the world, after Taiwan, while United States and Japan sits at 1.72 and 1.42 respectively. This is a problem since the low birth rate combined with aging population creates a huge burden on its workforce to sustain the nation's tax revenue and health care systems [@nargund_2009]. The problem can be traced back to the 1950s where Korea had its baby boom. Following a huge jump in population, the Korean government imposed an anti-naturalistic policy in the 1960s where several contraceptives were abundantly distributed and introduced to the public. Since then, the trend of declining birth rate have been noticed but was regarded as a problem that would stabilize on its own until the 1980s [@kim_2005]. However, contrary to the expectation, it continued to dwindle until today. Many scholars point at the following reasons: intense competition in education and employment, low sense of economical security, and higher education along women [@ryall_2021]. Although it has never increased since, the government hopefully anticipates that the birth rate will bounce back to 1.0 by 2031 [@lee_2021]. In this paper we examine possible economical reasons for it and perform regression models to further predict whether the birthrate will continue to decrease.
 
-it is similar with other high income countries 
+With the data obtained from the World Bank, we will perform multiple analyses on the crude birth rate variable. Crude birth rate is reported by number of births per thousand population in each year. I hypothesize that the crude birth rate decreasing has a strong correlation with economical status of the general population. To confirm the hypothesis we will use visualization to demonstrate a clear relationship to the reader. After that we will perform nonlinear regression on the crude birth rate variable to estimate the trend and assess the severity of the issue in the next couple years. The projected results show that the decline in birth rate is far from flattening and will continue to decrease at least for the near future. This is a concerning outcome that needs to be addressed socially.
 
-How we got the data
-
-Which methods We will be using
-
-Layout of the paper
+The remainder of the paper is as follows: Section \@ref(data) comments on the data source and performs the analyses the correlation between the variables of focus using plots and tables. Section \@ref(model) constructs a nonlinear regression model to predict future birth rates. Section \@ref(results) explains the conclusion reached by the data and the model. Following the conclusion there are three discussion points in Section \@ref(discussion). Then the paper concludes by going over weaknesses and ideas for next steps in Section \@ref(weaknesses-and-next-steps).
 
 # Data
 
+We obtain the data from the World Bank open data portal.
 
 # Model
 
