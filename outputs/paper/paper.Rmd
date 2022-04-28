@@ -1,5 +1,5 @@
 ---
-title: "South Korea's Alarming Steady Decrease in Birth Rate is Not Expected to Level Unless Drastic Measures are Taken"
+title: "South Korea's Steady Decline in Birth Rate is Not Expected to Level Unless Measures are Taken"
 author: Eunkyo Oh
 thanks: "Code and data are available at: github.com/oheunkyo/Decreasing-Birth-Rate-of-Korea"
 date: "`r format(Sys.time(), '%d %B %Y')`"
@@ -7,7 +7,10 @@ abstract: "The Republic of Korea's birth rate is decreasing at an alarming pace 
  \\par
  \\textbf {Keywords:} south korea, birth rate, decreasing birth rate, population, aging population, regression studies, world bank"
 output:
-  bookdown::pdf_document2
+  bookdown::pdf_document2:
+    includes:  
+        in_header: preamble-latex.tex 
+        # https://stackoverflow.com/questions/16626462/figure-position-in-markdown-when-converting-to-pdf-with-knitr-and-pandoc/33801326#33801326
 toc: FALSE
 bibliography: references.bib
 ---
@@ -22,39 +25,128 @@ library(tidyverse)
 
 Republic of Korea's birth rate is at it's all time low and it dipped below 1 birth per women, at 0.84 in 2020 [@fadanelli_2022]. It is the second lowest in the world, after Taiwan, while United States and Japan sits at 1.72 and 1.42 respectively. This is a problem since the low birth rate combined with aging population creates a huge burden on its workforce to sustain the nation's tax revenue and health care systems [@nargund_2009]. The problem can be traced back to the 1950s where Korea had its baby boom. Following a huge jump in population, the Korean government imposed an anti-naturalistic policy in the 1960s where several contraceptives were abundantly distributed and introduced to the public. Since then, the trend of declining birth rate have been noticed but was regarded as a problem that would stabilize on its own until the 1980s [@kim_2005]. However, contrary to the expectation, it continued to dwindle until today. Many scholars point at the following reasons: intense competition in education and employment, low sense of economical security, and higher education along women [@ryall_2021]. Although it has never increased since, the government hopefully anticipates that the birth rate will bounce back to 1.0 by 2031 [@lee_2021]. In this paper we examine possible economical reasons for it and perform regression models to further predict whether the birthrate will continue to decrease.
 
-With the data obtained from the World Bank, we will perform multiple analyses on the crude birth rate variable. Crude birth rate is reported by number of births per thousand population in each year. I hypothesize that the crude birth rate decreasing has a strong correlation with economical status of the general population. To confirm the hypothesis we will use visualization to demonstrate a clear relationship to the reader. After that we will perform nonlinear regression on the crude birth rate variable to estimate the trend and assess the severity of the issue in the next couple years. The projected results show that the decline in birth rate is far from flattening and will continue to decrease at least for the near future. This is a concerning outcome that needs to be addressed socially.
+With the data obtained from the World Bank, we will perform multiple analyses on the crude birth rate variable. Crude birth rate is reported by number of births per thousand population in each year. I hypothesize that the crude birth rate decreasing has a strong correlation with economical status of the general population. To confirm the hypothesis we will use visualization to demonstrate a clear relationship to the reader. After that we will perform linear regression on the crude birth rate variable to estimate the trend and assess the severity of the issue in the next couple years. The projected results show that the decline in birth rate is far from flattening and will continue to decrease at least for the near future. This is a concerning outcome that needs to be addressed socially.
 
-The remainder of the paper is as follows: Section \@ref(data) comments on the data source and performs the analyses the correlation between the variables of focus using plots and tables. Section \@ref(model) constructs a nonlinear regression model to predict future birth rates. Section \@ref(results) explains the conclusion reached by the data and the model. Following the conclusion there are three discussion points in Section \@ref(discussion). Then the paper concludes by going over weaknesses and ideas for next steps in Section \@ref(weaknesses-and-next-steps).
+The remainder of the paper is as follows: Section \@ref(data) comments on the data source and performs the analyses the correlation between the variables of focus using plots and tables. Section \@ref(model) constructs a linear regression model to predict future birth rates. Section \@ref(results) explains the conclusion reached by the data and the model. Following the conclusion there are three discussion points in Section \@ref(discussion). Then the paper concludes by going over weaknesses and ideas for next steps in Section \@ref(weaknesses-and-next-steps).
 
 # Data
 
-We obtain the data from the World Bank open data portal.
+The data we are going to analyze is the annual summary of crude birthrate and other relevant economical variables of the country profile of South Korea. We obtain the data from the World Bank open data portal [@wbank]. The dataset consists of all recorded data of the nation in four categories: 'Social', 'Economic', 'Environment', and 'Institutions'. It includes more than 1400 variables and data for each variable starting from the year 1960 to 2020. From the dataset, we focus on the relevant rows in respect to our topic, and remove all unnecessary rows. We modify and clean our data using packages `tidyverse` [@citetidyverse] and `janitor` [@citejanitor] using the and the statistical programming language R [@citeR]. 
+
+After obtaining our data, we reduce the number of variables to only contain the necessary columns. In this paper, we will focus on six columns. `Birth rate, crude (per 1,000 people)` is our variable of focus. It displays the yearly crude birthrate per 1000 people. `Labor force participation rate, female (% of female population ages 15+)` shows the percentage of female population over 15 years of age in the labor force. Similarly, `Labor force participation rate, male (% of male population ages 15+)` shows the percentage of female population over 15 years of age in the labor force. `School enrollment, tertiary, female (% gross)` shows the percentage of women enrolled in tertiary education each year. Tertiary education denotes post-secondary education, such as colleges and universities. `School enrollment, tertiary, male (% gross)` denotes the percentage of male population enrolled in tertiary education each year. Lastly, `Adjusted net national income per capita (current US$)` shows the net national income per each individual in current value of U.S. dollars, adjusted for inflation. From the variables over 1400, we pick the six variables to be our focus. Each variable contains numeric values. The dataset has been transposed from the original to put the years as rows and the variables to columns. 
+
+```{r dataextract, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(dplyr)
+
+# Read in the csv
+koreadata <- read_csv(here::here("inputs/data/API_KOR_DS2_en_csv_v2_3755961.csv"))
+
+# Pick only the necessary columns
+koreadata <- 
+  koreadata |>
+  filter(row_number() == 803 | 
+           row_number() == 35 |
+           row_number() == 160 |
+           row_number() == 592 | 
+           row_number() == 426 |
+           row_number() == 825)
+
+newdata <-t(koreadata) 
+colnames(newdata) <- c('fenroll', 'flabour', 'mlabour', 'income', 'birthrate', 'menroll')
+rownames(newdata) <- colnames(koreadata)
+datadata <- data.frame(newdata)
+
+datadata <- datadata[-1,] 
+datadata <- slice(datadata, 1:(n() - 1)) 
+
+
+
+datadata |> 
+  slice(1:10) |> 
+  kable(
+    caption = "First ten rows of the Dataset with only necessary columns",
+    col.names = c("Post-Secondary Enrollment (Female) ", "Percentage of Female in Workforce", "Percentage of Male in Workforce", "Net Yearly Income per Capita", "Crude Birthrate", "Post-Secondary Enrollment (Male)"),
+    digits = 1,
+    booktabs = TRUE, 
+    linesep = ""
+  ) 
+
+```
+
+Table \@ref(tab:dataextract) represents the first ten rows of our dataset. The table was created with `knitr::kable()` [@citeknitr]. We are interested in which variables show signs of correlation with the crude birthrate. Some values of the columns are missing before the 1970's. We will analyze with the figures below. Figures in the paper were created with `ggplot2` [@citeggplot]
+
+```{r crudebr, fig.cap="Crude Birthrate Over the Years", echo = FALSE, warning=FALSE, message=FALSE}
+datadata |>
+  ggplot(mapping = aes(x = as.numeric(row.names(datadata)), y = birthrate)) +
+  geom_point() +
+  theme_minimal() +
+  labs(x = "Year",
+       y = "Crude Birth Rate")
+```
+Figure \@ref(fig:crudebr) represents the crude birthrate of the South Korean population over the years. It is clearly decreasing in a dramatic way.
+
+```{r menroll, fig.cap="Gross Post-Secondary Enrollment of Males Over the Years", echo = FALSE, warning=FALSE, message=FALSE}
+datadata |>
+  ggplot(mapping = aes(x = as.numeric(row.names(datadata)), y = as.numeric(as.character(menroll)))) +
+  geom_point() +
+  theme_minimal() +
+  coord_cartesian(xlim = c(1984, 2019)) +
+  labs(x = "Year",
+       y = "Gross Post-Secondary Enrollment (Male)")
+```
+
+```{r fenroll, fig.cap="Gross Post-Secondary Enrollment of Females Over the Years", echo = FALSE, warning=FALSE, message=FALSE}
+datadata |>
+  ggplot(mapping = aes(x = as.numeric(row.names(datadata)), y = as.numeric(as.character(fenroll)))) +
+  geom_point() +
+  theme_minimal() +
+  coord_cartesian(xlim = c(1984, 2019)) +
+  labs(x = "Year",
+       y = "Gross Post-Secondary Enrollment (Female)")
+```
+
+Figure \@ref(fig:menroll) and Figure \@ref(fig:fenroll) shows the tertiary enrollment of of male and female. Since it is a gross enrollment value, the value can go over 100 percent. 
+
+```{r fwork, fig.cap="Percentage of Female in Workforce", echo = FALSE, warning=FALSE, message=FALSE}
+datadata |>
+  ggplot(mapping = aes(x = as.numeric(row.names(datadata)), y = as.numeric(as.character(flabour)))) +
+  geom_point() +
+  theme_minimal() +
+  coord_cartesian(xlim = c(1984, 2019)) +
+  labs(x = "Year",
+       y = "Percentage of Female in Workforce")
+```
+
+
+```{r mwork, fig.cap="Percentage of Male in Workforce", echo = FALSE, warning=FALSE, message=FALSE}
+datadata |>
+  ggplot(mapping = aes(x = as.numeric(row.names(datadata)), y = as.numeric(as.character(mlabour)))) +
+  geom_point() +
+  theme_minimal() +
+  coord_cartesian(xlim = c(1984, 2019)) +
+  labs(x = "Year",
+       y = "Percentage of Male in Workforce")
+```
+Figure \@ref(fig:fwork) and Figure \@ref(fig:mwork) shows the percentage of population over the age of 15 in the workforce. As you can see the percentage for female is steadily increasing whereas the percentage for male do not show a discernible pattern. 
 
 # Model
 
+We will perform linear regression 
 
 # Results
 
+Results show that there is an inverse relationship of birthrate to tertiary enrollment. There also seems to be a correlation with women's education and the crude birth rate.
+
 # Discussion
 
-## First discussion point
-
-## Second discussion point
-
-## Third discussion point
-
 ## Weaknesses and next steps
+
 
 \newpage
 
 \appendix
-
-# Appendix {-}
-
-
-# Additional details
-
-# Enhancement
 
 \newpage
 
